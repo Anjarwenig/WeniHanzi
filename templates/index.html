@@ -82,11 +82,10 @@
     }
 
     function playSound() {
-      const text = cards[current].Pinyin;
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "zh-CN";
-      speechSynthesis.speak(utterance);
-    }
+  const text = cards[current].Pinyin;
+  const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(text)}`);
+  audio.play();
+}
 
     function nextCard() {
       current = (current + 1) % cards.length;
