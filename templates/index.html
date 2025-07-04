@@ -22,18 +22,23 @@
     }
 
     button {
-      margin: 10px;
+      margin: 8px;
       padding: 10px 15px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       background-color: #3f51b5;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     button:hover {
       background-color: #2c3e91;
+    }
+
+    .chapter {
+      margin-bottom: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -42,20 +47,23 @@
   <h1>🀄 WeniHanzi Flashcards</h1>
 
   <div class="flashcard" id="flashcard">
+    <div class="chapter" id="chapter">Chapter: </div>
     <h2 id="hanzi">Loading...</h2>
     <p id="pinyin" style="display: none;"></p>
     <p id="english" style="display: none;"></p>
     <div>
-      <button onclick="showPinyin()">Show Pinyin</button>
-      <button onclick="showEnglish()">Show English</button>
-      <button onclick="playSound()">🔊 Play Sound</button>
-      <button onclick="nextCard()">Next</button>
+      <button onclick="togglePinyin()">Pinyin</button>
+      <button onclick="toggleEnglish()">English</button>
+      <button onclick="prevCard()">⬅️ Back</button>
+      <button onclick="nextCard()">➡️ Next</button>
     </div>
   </div>
 
   <script>
     let cards = [];
     let current = 0;
+    let pinyinVisible = false;
+    let englishVisible = false;
 
     fetch("/cards")
       .then(res => res.json())
@@ -69,26 +77,32 @@
       document.getElementById("hanzi").textContent = card.Hanzi;
       document.getElementById("pinyin").textContent = "Pinyin: " + card.Pinyin;
       document.getElementById("english").textContent = "English: " + card.English;
-      document.getElementById("pinyin").style.display = "none";
-      document.getElementById("english").style.display = "none";
+      document.getElementById("chapter").textContent = "Chapter: " + card.Chapter;
+      document.getElementById("pinyin").style.display = pinyinVisible ? "block" : "none";
+      document.getElementById("english").style.display = englishVisible ? "block" : "none";
     }
 
-    function showPinyin() {
-      document.getElementById("pinyin").style.display = "block";
+    function togglePinyin() {
+      pinyinVisible = !pinyinVisible;
+      showCard();
     }
 
-    function showEnglish() {
-      document.getElementById("english").style.display = "block";
+    function toggleEnglish() {
+      englishVisible = !englishVisible;
+      showCard();
     }
-
-    function playSound() {
-  const text = cards[current].Pinyin;
-  const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(text)}`);
-  audio.play();
-}
 
     function nextCard() {
       current = (current + 1) % cards.length;
+      pinyinVisible = false;
+      englishVisible = false;
+      showCard();
+    }
+
+    function prevCard() {
+      current = (current - 1 + cards.length) % cards.length;
+      pinyinVisible = false;
+      englishVisible = false;
       showCard();
     }
   </script>
