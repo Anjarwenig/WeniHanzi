@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WeniHanzi</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 40px; }
+        .card { border: 1px solid #ccc; padding: 30px; margin: 20px auto; width: 300px; border-radius: 10px; }
+        button { margin: 10px; padding: 10px 15px; cursor: pointer; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>🀄 WeniHanzi Flashcards</h1>
+    <div class="card" id="flashcard">
+        <h2 id="hanzi">Loading...</h2>
+        <p id="pinyin" class="hidden"></p>
+        <p id="english" class="hidden"></p>
+        <audio id="audio" src=""></audio>
+        <div>
+            <button onclick="showPinyin()">Show Pinyin</button>
+            <button onclick="showEnglish()">Show English</button>
+            <button onclick="playAudio()">🔊 Play</button>
+            <button onclick="nextCard()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let cards = [], current = 0;
+
+        fetch('/cards')
+            .then(res => res.json())
+            .then(data => {
+                cards = data;
+                showCard();
+            });
+
+        function showCard() {
+            const card = cards[current];
+            document.getElementById('hanzi').textContent = card.Hanzi;
+            document.getElementById('pinyin').textContent = "Pinyin: " + card.Pinyin;
+            document.getElementById('english').textContent = "English: " + card.English;
+            document.getElementById('audio').src = card.AudioURL;
+            document.getElementById('pinyin').classList.add('hidden');
+            document.getElementById('english').classList.add('hidden');
+        }
+
+        function showPinyin() {
+            document.getElementById('pinyin').classList.remove('hidden');
+        }
+
+        function showEnglish() {
+            document.getElementById('english').classList.remove('hidden');
+        }
+
+        function playAudio() {
+            document.getElementById('audio').play();
+        }
+
+        function nextCard() {
+            current = (current + 1) % cards.length;
+            showCard();
+        }
+    </script>
+</body>
+</html>
